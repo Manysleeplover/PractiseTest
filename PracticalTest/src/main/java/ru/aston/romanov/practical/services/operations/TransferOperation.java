@@ -2,8 +2,9 @@ package ru.aston.romanov.practical.services.operations;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.aston.romanov.practical.constants.OperationEnum;
-import ru.aston.romanov.practical.dto.OperationDTO;
+import ru.aston.romanov.practical.dto.operations.OperationRequestDTO;
 import ru.aston.romanov.practical.dto.TransactionDTO;
 import ru.aston.romanov.practical.entities.Account;
 import ru.aston.romanov.practical.entities.Beneficiary;
@@ -26,20 +27,23 @@ public class TransferOperation implements AccountOperation {
         this.accountRepo = accountRepo;
         this.entityModelMapper = entityModelMapper;
     }
+
     @Override
-    public TransactionDTO process(OperationDTO operationDTO) throws InvalidPinCodeException, InsufficientFundsException, NoAccountPresentException {
-        Account accountFrom = accountRepo.findById(operationDTO.getTransferFromAccountId()).orElseThrow(NoAccountPresentException::new);
-        Account accountTo = accountRepo.findById(operationDTO.getTransferToAccountId()).orElseThrow(NoAccountPresentException::new);
+    @Transactional(rollbackFor = Exception.class)
+    public TransactionDTO process(OperationRequestDTO operationRequestDTO) throws InvalidPinCodeException, InsufficientFundsException, NoAccountPresentException {
+        Account accountFrom = accountRepo.findById(operationRequestDTO.getId()).orElseThrow(NoAccountPresentException::new);
+        Account accountTo = accountRepo.findById(operationRequestDTO.getTransferToAccountId()).orElseThrow(NoAccountPresentException::new);
         Transfer transactionFrom = Transfer.builder()
                 .balanceBefore(accountFrom.getBalance())
                 .date(LocalDateTime.now())
                 .account(accountFrom)
-                .operationSum(operationDTO.getOperationSum())
-                .transferToAccountId(operationDTO.getTransferToAccountId())
+                .operationSum(operationRequestDTO.getOperationSum())
+                .transferToAccountId(operationRequestDTO.getTransferToAccountId())
                 .build();
 
+
         Beneficiary beneficiary = accountFrom.getBeneficiary();
-        if (!Objects.equals(beneficiary.getPin(), operationDTO.getPin())) {
+        if (!Objects.equals(beneficiary.getPin(), operationRequestDTO.getPin())) {
             String exceptionMessage = "Invalid pin-code, make sure it is correct and try again";
             transactionFrom.setException(exceptionMessage);
             accountFrom.addTransaction(transactionFrom);
@@ -47,7 +51,7 @@ public class TransferOperation implements AccountOperation {
             throw new InvalidPinCodeException();
         }
 
-        if(accountFrom.getBalance().compareTo(operationDTO.getOperationSum()) < 0){
+        if (accountFrom.getBalance().compareTo(operationRequestDTO.getOperationSum()) < 0) {
             String exceptionMessage = "Insufficient funds exception, please make sure there are enough funds in your accountFrom";
             transactionFrom.setException(exceptionMessage);
             accountFrom.addTransaction(transactionFrom);
@@ -58,21 +62,21 @@ public class TransferOperation implements AccountOperation {
                 .balanceBefore(accountTo.getBalance())
                 .date(LocalDateTime.now())
                 .account(accountTo)
-                .operationSum(operationDTO.getOperationSum())
-                .transferFromAccountId(operationDTO.getTransferFromAccountId())
+                .operationSum(operationRequestDTO.getOperationSum())
+                .transferFromAccountId(operationRequestDTO.getId())
                 .build();
 
-        accountFrom.setBalance(accountFrom.getBalance().subtract(operationDTO.getOperationSum()));
+        accountFrom.setBalance(accountFrom.getBalance().subtract(operationRequestDTO.getOperationSum()));
         accountFrom.addTransaction(transactionFrom);
 
-        accountTo.setBalance(accountTo.getBalance().add(operationDTO.getOperationSum()));
+        accountTo.setBalance(accountTo.getBalance().add(operationRequestDTO.getOperationSum()));
         accountTo.addTransaction(transactionTo);
 
         accountRepo.save(accountFrom);
         accountRepo.save(accountTo);
 
         TransactionDTO transactionDTO = entityModelMapper.map(transactionFrom, TransactionDTO.class);
-        transactionDTO.setOperation_type(this.type());
+        transactionDTO.setOperationType(this.type());
 
 
         return transactionDTO;
@@ -82,4 +86,5 @@ public class TransferOperation implements AccountOperation {
     public String type() {
         return OperationEnum.TRANSFER.getName();
     }
+
 }

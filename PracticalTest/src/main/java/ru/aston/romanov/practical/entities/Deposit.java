@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("deposit")
 public class Deposit extends Transaction {
     @Builder
-    public Deposit(Long id, BigDecimal balanceBefore, LocalDateTime date, String exception, BigDecimal operationSum, Account account) {
-        super(id, balanceBefore, date, exception, operationSum, account);
+
+    public Deposit(Long id, BigDecimal balanceBefore, LocalDateTime date, String exception, BigDecimal operationSum, String operationType, Account account) {
+        super(id, balanceBefore, date, exception, operationSum, operationType, account);
     }
 }

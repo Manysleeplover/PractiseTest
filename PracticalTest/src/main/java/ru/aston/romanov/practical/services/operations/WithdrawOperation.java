@@ -2,8 +2,9 @@ package ru.aston.romanov.practical.services.operations;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.aston.romanov.practical.constants.OperationEnum;
-import ru.aston.romanov.practical.dto.OperationDTO;
+import ru.aston.romanov.practical.dto.operations.OperationRequestDTO;
 import ru.aston.romanov.practical.dto.TransactionDTO;
 import ru.aston.romanov.practical.entities.Account;
 import ru.aston.romanov.practical.entities.Beneficiary;
@@ -28,17 +29,18 @@ public class WithdrawOperation implements AccountOperation {
         this.entityModelMapper = entityModelMapper;
     }
     @Override
-    public TransactionDTO process(OperationDTO operationDTO) throws InvalidPinCodeException, NoAccountPresentException, InsufficientFundsException {
-        Account account = accountRepo.findById(operationDTO.getTransferFromAccountId()).orElseThrow(NoAccountPresentException::new);
+    @Transactional(rollbackFor = Exception.class)
+    public TransactionDTO process(OperationRequestDTO operationRequestDTO) throws InvalidPinCodeException, NoAccountPresentException, InsufficientFundsException {
+        Account account = accountRepo.findById(operationRequestDTO.getId()).orElseThrow(NoAccountPresentException::new);
         Withdraw transaction = Withdraw.builder()
                 .balanceBefore(account.getBalance())
                 .date(LocalDateTime.now())
                 .account(account)
-                .operationSum(operationDTO.getOperationSum())
+                .operationSum(operationRequestDTO.getOperationSum())
                 .build();
 
         Beneficiary beneficiary = account.getBeneficiary();
-        if (!Objects.equals(beneficiary.getPin(), operationDTO.getPin())) {
+        if (!Objects.equals(beneficiary.getPin(), operationRequestDTO.getPin())) {
             String exceptionMessage = "Invalid pin-code, make sure it is correct and try again";
             transaction.setException(exceptionMessage);
             account.addTransaction(transaction);
@@ -46,7 +48,7 @@ public class WithdrawOperation implements AccountOperation {
             throw new InvalidPinCodeException();
         }
 
-        if(account.getBalance().compareTo(operationDTO.getOperationSum()) < 0){
+        if(account.getBalance().compareTo(operationRequestDTO.getOperationSum()) < 0){
             String exceptionMessage = "Insufficient funds exception, please make sure there are enough funds in your account";
             transaction.setException(exceptionMessage);
             account.addTransaction(transaction);
@@ -54,11 +56,11 @@ public class WithdrawOperation implements AccountOperation {
             throw new InsufficientFundsException();
         }
 
-        account.setBalance(account.getBalance().subtract(operationDTO.getOperationSum()));
+        account.setBalance(account.getBalance().subtract(operationRequestDTO.getOperationSum()));
         account.addTransaction(transaction);
         accountRepo.save(account);
         TransactionDTO transactionDTO = entityModelMapper.map(transaction, TransactionDTO.class);
-        transactionDTO.setOperation_type(this.type());
+        transactionDTO.setOperationType(this.type());
 
 
         return transactionDTO;
@@ -68,4 +70,5 @@ public class WithdrawOperation implements AccountOperation {
     public String type() {
         return OperationEnum.WITHDRAW.getName();
     }
+
 }

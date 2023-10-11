@@ -10,10 +10,10 @@ public enum OperationEnum {
 
     private final String name;
     private final int code;
+
     OperationEnum(String withdraw, int i) {
         this.name = withdraw;
         this.code = i;
     }
-
 
 }

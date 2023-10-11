@@ -19,8 +19,8 @@ public class Transfer extends Transaction {
     private Long transferToAccountId;
 
     @Builder
-    public Transfer(Long id, BigDecimal balanceBefore, LocalDateTime date, String exception, BigDecimal operationSum, Account account, Long transferFromAccountId, Long transferToAccountId) {
-        super(id, balanceBefore, date, exception, operationSum, account);
+    public Transfer(Long id, BigDecimal balanceBefore, LocalDateTime date, String exception, BigDecimal operationSum, String operationType, Account account, Long transferFromAccountId, Long transferToAccountId) {
+        super(id, balanceBefore, date, exception, operationSum, operationType, account);
         this.transferFromAccountId = transferFromAccountId;
         this.transferToAccountId = transferToAccountId;
     }

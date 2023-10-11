@@ -1,8 +1,8 @@
 package ru.aston.romanov.practical.services;
 
 import org.springframework.stereotype.Service;
-import ru.aston.romanov.practical.dto.OperationDTO;
 import ru.aston.romanov.practical.dto.TransactionDTO;
+import ru.aston.romanov.practical.dto.operations.OperationRequestDTO;
 import ru.aston.romanov.practical.exceptions.InsufficientFundsException;
 import ru.aston.romanov.practical.exceptions.InvalidPinCodeException;
 import ru.aston.romanov.practical.exceptions.NoAccountPresentException;
@@ -18,13 +18,13 @@ public class OperationsService {
         this.operations = operations;
     }
 
-    public TransactionDTO processOperation(OperationDTO operationDTO) {
-        AccountOperation accountOperation = operations.get(operationDTO.getOperationType());
+    public TransactionDTO processOperation(OperationRequestDTO operationRequestDTO) {
+        AccountOperation accountOperation = operations.get(operationRequestDTO.getOperationType());
         TransactionDTO transactionDTO;
         try {
-            transactionDTO = accountOperation.process(operationDTO);
+            transactionDTO = accountOperation.process(operationRequestDTO);
         } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException e) {
-            throw new RuntimeException(e);
+            transactionDTO = TransactionDTO.builder().exception(e.getMessage()).build();
         }
         return transactionDTO;
     }
