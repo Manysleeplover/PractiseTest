@@ -18,15 +18,9 @@ public class OperationsService {
         this.operations = operations;
     }
 
-    public TransactionDTO processOperation(OperationRequestDTO operationRequestDTO) {
+    public TransactionDTO processOperation(OperationRequestDTO operationRequestDTO) throws InvalidPinCodeException, NoAccountPresentException, InsufficientFundsException {
         AccountOperation accountOperation = operations.get(operationRequestDTO.getOperationType());
-        TransactionDTO transactionDTO;
-        try {
-            transactionDTO = accountOperation.process(operationRequestDTO);
-        } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException e) {
-            transactionDTO = TransactionDTO.builder().exception(e.getMessage()).build();
-        }
-        return transactionDTO;
+        return accountOperation.process(operationRequestDTO);
     }
 
 }

@@ -3,18 +3,21 @@ package ru.aston.romanov.practical.services;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.aston.romanov.practical.dto.AccountDTO;
 import ru.aston.romanov.practical.dto.BeneficiaryDTO;
 import ru.aston.romanov.practical.dto.TransactionDTO;
 import ru.aston.romanov.practical.entities.Account;
 import ru.aston.romanov.practical.entities.Beneficiary;
 import ru.aston.romanov.practical.entities.Transaction;
+import ru.aston.romanov.practical.exceptions.InvalidPinCodeException;
 import ru.aston.romanov.practical.exceptions.NoAccountPresentException;
 import ru.aston.romanov.practical.exceptions.NoBeneficiaryPresentException;
 import ru.aston.romanov.practical.repositories.AccountRepo;
 import ru.aston.romanov.practical.repositories.BeneficiaryRepo;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static ru.aston.romanov.practical.constants.BalanceConstants.DEFAULT_BALANCE;
@@ -31,6 +34,7 @@ public class AccountService {
         this.entityModelMapper = entityModelMapper;
     }
 
+    @Transactional
     public AccountDTO createAccount(BeneficiaryDTO beneficiaryDTO) {
         Optional<Beneficiary> optionalBeneficiary = getBeneficiaryById(beneficiaryDTO);
 
@@ -42,7 +46,7 @@ public class AccountService {
         return entityModelMapper.map(account, AccountDTO.class);
     }
 
-    public BeneficiaryDTO getAccountInfo(BeneficiaryDTO beneficiaryDTO) throws NoBeneficiaryPresentException {
+    public BeneficiaryDTO getBeneficiaryInfo(BeneficiaryDTO beneficiaryDTO) throws NoBeneficiaryPresentException {
         Beneficiary beneficiary = getBeneficiaryById(beneficiaryDTO).orElseThrow(NoBeneficiaryPresentException::new);
         List<Account> accounts = beneficiary.getAccounts();
         List<AccountDTO> accountDTOs = entityModelMapper.map(accounts, new TypeToken<List<AccountDTO>>() {
@@ -54,8 +58,13 @@ public class AccountService {
         return resultBeneficiaryDTO;
     }
 
-    public AccountDTO getAccountInfo(AccountDTO accountDTO) throws NoAccountPresentException {
+    public AccountDTO getAccountInfo(AccountDTO accountDTO) throws NoAccountPresentException, InvalidPinCodeException {
         Account account = accountRepo.findById(accountDTO.getId()).orElseThrow(NoAccountPresentException::new);
+        Beneficiary beneficiary = account.getBeneficiary();
+        if (!Objects.equals(beneficiary.getPin(), accountDTO.getPin())) {
+            throw new InvalidPinCodeException();
+        }
+
         List<? extends Transaction> transactions = account.getTransactions();
         List<TransactionDTO> transactionDTOS = entityModelMapper.map(transactions, new TypeToken<List<TransactionDTO>>() {
         }.getType());

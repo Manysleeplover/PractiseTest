@@ -1,14 +1,12 @@
 package ru.aston.romanov.practical.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @Builder
 public class ErrorDTO {
-    private String errorMessage;
-    private String status;
-    private String code;
+    private String message;
+    private int httpCode;
+    private String httpStatus;
 }
