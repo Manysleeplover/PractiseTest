@@ -28,7 +28,7 @@ public class WithdrawOperation implements AccountOperation {
         this.entityModelMapper = entityModelMapper;
     }
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TransactionDTO process(OperationRequestDTO operationRequestDTO) throws InvalidPinCodeException, NoAccountPresentException, InsufficientFundsException {
         Account account = accountRepo.findById(operationRequestDTO.getId()).orElseThrow(NoAccountPresentException::new);
         Withdraw transaction = Withdraw.builder()

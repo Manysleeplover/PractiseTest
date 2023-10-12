@@ -29,7 +29,7 @@ public class TransferOperation implements AccountOperation {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TransactionDTO process(OperationRequestDTO operationRequestDTO) throws InvalidPinCodeException, InsufficientFundsException, NoAccountPresentException {
         Account accountFrom = accountRepo.findById(operationRequestDTO.getId()).orElseThrow(NoAccountPresentException::new);
         Account accountTo = accountRepo.findById(operationRequestDTO.getTransferToAccountId()).orElseThrow(NoAccountPresentException::new);

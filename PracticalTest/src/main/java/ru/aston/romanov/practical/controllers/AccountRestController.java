@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.aston.romanov.practical.dto.AccountDTO;
 import ru.aston.romanov.practical.dto.BeneficiaryDTO;
 import ru.aston.romanov.practical.dto.ErrorDTO;
-import ru.aston.romanov.practical.exceptions.InvalidPinCodeException;
-import ru.aston.romanov.practical.exceptions.NoAccountPresentException;
-import ru.aston.romanov.practical.exceptions.NoBeneficiaryPresentException;
 import ru.aston.romanov.practical.services.AccountService;
 import ru.aston.romanov.practical.utils.validation.groups.AccountInfoMarker;
 import ru.aston.romanov.practical.utils.validation.groups.BeneficiaryInfoMarker;
@@ -62,17 +59,11 @@ public class AccountRestController {
                             schema = @Schema(implementation = ErrorDTO.class))})
     })
     @PostMapping("beneficiary/info")
-    public ResponseEntity<BeneficiaryDTO> getBeneficiaryInfo(@Validated(BeneficiaryInfoMarker.class) @RequestBody BeneficiaryDTO beneficiaryDTO) {
+    public BeneficiaryDTO getBeneficiaryInfo(@Validated(BeneficiaryInfoMarker.class) @RequestBody BeneficiaryDTO beneficiaryDTO) {
         log.info("Received a request to get Beneficiary info");
-        BeneficiaryDTO result;
-        try {
-            result = accountService.getBeneficiaryInfo(beneficiaryDTO);
-        } catch (NoBeneficiaryPresentException | InvalidPinCodeException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        BeneficiaryDTO result = accountService.getBeneficiaryInfo(beneficiaryDTO);
         log.info("Beneficiary information successfully received");
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return result;
     }
 
     @Operation(summary = "Obtaining information about the account")
@@ -88,16 +79,10 @@ public class AccountRestController {
                             schema = @Schema(implementation = ErrorDTO.class))})
     })
     @PostMapping("info")
-    public ResponseEntity<AccountDTO> getAccountInfo(@Validated(AccountInfoMarker.class) @RequestBody AccountDTO accountDTO) {
+    public AccountDTO getAccountInfo(@Validated(AccountInfoMarker.class) @RequestBody AccountDTO accountDTO) {
         log.info("Received a request to get Account info");
-        AccountDTO result;
-        try {
-            result = accountService.getAccountInfo(accountDTO);
-        } catch (NoAccountPresentException | InvalidPinCodeException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        AccountDTO result = accountService.getAccountInfo(accountDTO);
         log.info("Account information successfully received");
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return result;
     }
 }

@@ -28,7 +28,7 @@ public class DepositOperation implements AccountOperation {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TransactionDTO process(OperationRequestDTO operationRequestDTO) throws InvalidPinCodeException, NoAccountPresentException {
         Account account = accountRepo.findById(operationRequestDTO.getId()).orElseThrow(NoAccountPresentException::new);
         Deposit transaction = Deposit.builder()
