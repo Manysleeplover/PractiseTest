@@ -24,11 +24,11 @@ import ru.aston.romanov.practical.utils.validation.groups.TransferMarker;
 
 @RestController
 @RequestMapping("/operation/")
-public class OperationController {
+public class OperationRestController {
 
     private final OperationsService operationsService;
 
-    public OperationController(OperationsService operationsService) {
+    public OperationRestController(OperationsService operationsService) {
         this.operationsService = operationsService;
     }
 

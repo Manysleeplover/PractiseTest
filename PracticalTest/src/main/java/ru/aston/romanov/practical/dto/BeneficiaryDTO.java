@@ -2,13 +2,19 @@ package ru.aston.romanov.practical.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.aston.romanov.practical.utils.validation.groups.BeneficiaryInfoMarker;
 import ru.aston.romanov.practical.utils.validation.groups.CreateAccountMarker;
 
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BeneficiaryDTO {
     private Long id;
     @NotNull(groups = {CreateAccountMarker.class, BeneficiaryInfoMarker.class})

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,11 +26,12 @@ import ru.aston.romanov.practical.utils.validation.groups.CreateAccountMarker;
 
 @RestController
 @RequestMapping("/account/")
-public class AccountController {
+@Slf4j
+public class AccountRestController {
 
     private final AccountService accountService;
 
-    public AccountController(AccountService accountService) {
+    public AccountRestController(AccountService accountService) {
         this.accountService = accountService;
     }
 
@@ -41,7 +43,9 @@ public class AccountController {
     })
     @PostMapping("create")
     public ResponseEntity<AccountDTO> createBeneficiary(@Validated(CreateAccountMarker.class) @RequestBody BeneficiaryDTO beneficiaryDTO) {
+        log.info("Received a request to create an account");
         AccountDTO accountDTO = accountService.createAccount(beneficiaryDTO);
+        log.info("Account created successfully");
         return new ResponseEntity<>(accountDTO, HttpStatus.OK);
     }
 
@@ -59,13 +63,15 @@ public class AccountController {
     })
     @PostMapping("beneficiary/info")
     public ResponseEntity<BeneficiaryDTO> getBeneficiaryInfo(@Validated(BeneficiaryInfoMarker.class) @RequestBody BeneficiaryDTO beneficiaryDTO) {
+        log.info("Received a request to get Beneficiary info");
         BeneficiaryDTO result;
         try {
             result = accountService.getBeneficiaryInfo(beneficiaryDTO);
         } catch (NoBeneficiaryPresentException | InvalidPinCodeException e) {
+            log.error(e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
-
+        log.info("Beneficiary information successfully received");
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -83,12 +89,15 @@ public class AccountController {
     })
     @PostMapping("info")
     public ResponseEntity<AccountDTO> getAccountInfo(@Validated(AccountInfoMarker.class) @RequestBody AccountDTO accountDTO) {
+        log.info("Received a request to get Account info");
         AccountDTO result;
         try {
             result = accountService.getAccountInfo(accountDTO);
         } catch (NoAccountPresentException | InvalidPinCodeException e) {
+            log.error(e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
+        log.info("Account information successfully received");
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
