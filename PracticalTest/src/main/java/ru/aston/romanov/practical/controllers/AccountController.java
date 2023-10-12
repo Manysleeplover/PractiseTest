@@ -34,12 +34,12 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-//    @Operation(summary = "Create an account by firstname lastname and pin, or create Beneficiary and then create account")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "account has been created",
-//                    content = {@Content(mediaType = "application/json",
-//                            schema = @Schema(implementation = AccountDTO.class))}),
-//    })
+    @Operation(summary = "Create an account by firstname lastname and pin, or create Beneficiary and then create account")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "account has been created",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AccountDTO.class))}),
+    })
     @PostMapping("create")
     public ResponseEntity<AccountDTO> createBeneficiary(@Validated(CreateAccountMarker.class) @RequestBody BeneficiaryDTO beneficiaryDTO) {
         AccountDTO accountDTO = accountService.createAccount(beneficiaryDTO);
