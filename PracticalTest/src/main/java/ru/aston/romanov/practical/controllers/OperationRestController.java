@@ -20,7 +20,7 @@ import ru.aston.romanov.practical.exceptions.InsufficientFundsException;
 import ru.aston.romanov.practical.exceptions.InvalidPinCodeException;
 import ru.aston.romanov.practical.exceptions.NoAccountPresentException;
 import ru.aston.romanov.practical.exceptions.UnsupportedAccountOperationException;
-import ru.aston.romanov.practical.services.OperationsService;
+import ru.aston.romanov.practical.services.OperationService;
 import ru.aston.romanov.practical.utils.validation.groups.OperationMarker;
 import ru.aston.romanov.practical.utils.validation.groups.TransferMarker;
 
@@ -29,10 +29,10 @@ import ru.aston.romanov.practical.utils.validation.groups.TransferMarker;
 @Slf4j
 public class OperationRestController {
 
-    private final OperationsService operationsService;
+    private final OperationService operationService;
 
-    public OperationRestController(OperationsService operationsService) {
-        this.operationsService = operationsService;
+    public OperationRestController(OperationService operationService) {
+        this.operationService = operationService;
     }
 
 
@@ -56,7 +56,7 @@ public class OperationRestController {
         log.info("Received a request to top up to an account");
         TransactionDTO transactionDTO;
         try {
-            transactionDTO = operationsService.processOperation(operation);
+            transactionDTO = operationService.processOperation(operation);
         } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException |
                  UnsupportedAccountOperationException e) {
             log.error("Request execution error: {}", e.getMessage());
@@ -89,7 +89,7 @@ public class OperationRestController {
         log.info("Received a request to withdraw funds from an account");
         TransactionDTO transactionDTO;
         try {
-            transactionDTO = operationsService.processOperation(operation);
+            transactionDTO = operationService.processOperation(operation);
         } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException |
                  UnsupportedAccountOperationException e) {
             log.error("Request execution error: {}", e.getMessage());
@@ -122,7 +122,7 @@ public class OperationRestController {
         log.info("Received a request to transfer funds");
         TransactionDTO transactionDTO;
         try {
-            transactionDTO = operationsService.processOperation(operation);
+            transactionDTO = operationService.processOperation(operation);
         } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException |
                  UnsupportedAccountOperationException e) {
             log.error("Request execution error: {}", e.getMessage());

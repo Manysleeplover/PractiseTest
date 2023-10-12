@@ -36,7 +36,7 @@ public class AccountService {
 
     @Transactional
     public AccountDTO createAccount(BeneficiaryDTO beneficiaryDTO) {
-        Optional<Beneficiary> optionalBeneficiary = getBeneficiaryById(beneficiaryDTO);
+        Optional<Beneficiary> optionalBeneficiary = getBeneficiary(beneficiaryDTO);
 
         Beneficiary beneficiary = optionalBeneficiary.orElseGet(() -> entityModelMapper.map(beneficiaryDTO, Beneficiary.class));
         Account account = Account.builder().balance(DEFAULT_BALANCE).build();
@@ -46,8 +46,11 @@ public class AccountService {
         return entityModelMapper.map(account, AccountDTO.class);
     }
 
+    /**
+     *  Создаем счёт по фамилии имени и pin-коду бенефициара. Если его нет - создаем нового, если есть - добавляем найденному
+     */
     public BeneficiaryDTO getBeneficiaryInfo(BeneficiaryDTO beneficiaryDTO) throws NoBeneficiaryPresentException, InvalidPinCodeException {
-        Beneficiary beneficiary = getBeneficiaryById(beneficiaryDTO).orElseThrow(NoBeneficiaryPresentException::new);
+        Beneficiary beneficiary = getBeneficiary(beneficiaryDTO).orElseThrow(NoBeneficiaryPresentException::new);
         if (!Objects.equals(beneficiary.getPin(), beneficiaryDTO.getPin())) {
             throw new InvalidPinCodeException();
         }
@@ -77,7 +80,7 @@ public class AccountService {
         return resultAccountDTO;
     }
 
-    private Optional<Beneficiary> getBeneficiaryById(BeneficiaryDTO beneficiaryDTO) {
+    private Optional<Beneficiary> getBeneficiary(BeneficiaryDTO beneficiaryDTO) {
         return beneficiaryRepo.findBeneficiariesByFirstnameAndLastnameAndPin(
                 beneficiaryDTO.getFirstname(),
                 beneficiaryDTO.getLastname(),

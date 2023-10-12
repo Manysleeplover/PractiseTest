@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Entity
-@DiscriminatorValue("withdraw ")
+@DiscriminatorValue("withdraw")
 public class Withdraw extends Transaction {
     @Builder
     public Withdraw(Long id, BigDecimal balanceBefore, LocalDateTime date, String exception, BigDecimal operationSum, String operationType, Account account) {
