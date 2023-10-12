@@ -37,3 +37,13 @@ readme файл.</li>
 </ul>
 
 
+<h2> Для запуска проекта необходимы </h2>
+<ul>
+    <li>Java 17</li>
+    <li>Apache Maven 3.8.7</li>
+</ul>
+Выполняем:
+<li>mvn clean isntall
+<li>java -jar target/PracticalTest-0.0.1-SNAPSHOT.jar
+
+

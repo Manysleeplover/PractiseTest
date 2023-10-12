@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,6 +25,7 @@ import ru.aston.romanov.practical.utils.validation.groups.TransferMarker;
 
 @RestController
 @RequestMapping("/operation/")
+@Slf4j
 public class OperationRestController {
 
     private final OperationsService operationsService;
@@ -47,12 +49,15 @@ public class OperationRestController {
     })
     @PostMapping("deposit")
     public ResponseEntity<TransactionDTO> deposit(@Validated(OperationMarker.class) @RequestBody OperationRequestDTO operation) {
+        log.info("Received a request to top up to an account");
         TransactionDTO transactionDTO;
         try {
             transactionDTO = operationsService.processOperation(operation);
         } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException e) {
+            log.error("Request execution error: {}", e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
+        log.info("The request was successfully processed");
         return new ResponseEntity<>(transactionDTO, HttpStatus.OK);
     }
 
@@ -73,12 +78,15 @@ public class OperationRestController {
     })
     @PostMapping("withdraw")
     public ResponseEntity<TransactionDTO> withdraw(@Validated(OperationMarker.class) @RequestBody OperationRequestDTO operation) {
+        log.info("Received a request to withdraw funds from an account");
         TransactionDTO transactionDTO;
         try {
             transactionDTO = operationsService.processOperation(operation);
         } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException e) {
+            log.error("Request execution error: {}", e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
+        log.info("The request was successfully processed");
         return new ResponseEntity<>(transactionDTO, HttpStatus.OK);
     }
 
@@ -99,12 +107,15 @@ public class OperationRestController {
     })
     @PostMapping("transfer")
     public ResponseEntity<TransactionDTO> transfer(@Validated(TransferMarker.class) @RequestBody OperationRequestDTO operation) {
+        log.info("Received a request to transfer funds");
         TransactionDTO transactionDTO;
         try {
             transactionDTO = operationsService.processOperation(operation);
         } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException e) {
+            log.error("Request execution error: {}", e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
+        log.info("The request was successfully processed");
         return new ResponseEntity<>(transactionDTO, HttpStatus.OK);
     }
 
