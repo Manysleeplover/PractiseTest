@@ -6,6 +6,7 @@ import ru.aston.romanov.practical.dto.OperationRequestDTO;
 import ru.aston.romanov.practical.exceptions.InsufficientFundsException;
 import ru.aston.romanov.practical.exceptions.InvalidPinCodeException;
 import ru.aston.romanov.practical.exceptions.NoAccountPresentException;
+import ru.aston.romanov.practical.exceptions.UnsupportedAccountOperationException;
 import ru.aston.romanov.practical.services.operations.AccountOperation;
 
 import java.util.Map;
@@ -18,7 +19,10 @@ public class OperationsService {
         this.operations = operations;
     }
 
-    public TransactionDTO processOperation(OperationRequestDTO operationRequestDTO) throws InvalidPinCodeException, NoAccountPresentException, InsufficientFundsException {
+    public TransactionDTO processOperation(OperationRequestDTO operationRequestDTO) throws InvalidPinCodeException, NoAccountPresentException, InsufficientFundsException, UnsupportedAccountOperationException {
+        if(!operations.containsKey(operationRequestDTO.getOperationType())){
+            throw new UnsupportedAccountOperationException(String.format("operation {%s} is not supported", operationRequestDTO.getOperationType()));
+        }
         AccountOperation accountOperation = operations.get(operationRequestDTO.getOperationType());
         return accountOperation.process(operationRequestDTO);
     }

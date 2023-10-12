@@ -19,6 +19,7 @@ import ru.aston.romanov.practical.dto.TransactionDTO;
 import ru.aston.romanov.practical.exceptions.InsufficientFundsException;
 import ru.aston.romanov.practical.exceptions.InvalidPinCodeException;
 import ru.aston.romanov.practical.exceptions.NoAccountPresentException;
+import ru.aston.romanov.practical.exceptions.UnsupportedAccountOperationException;
 import ru.aston.romanov.practical.services.OperationsService;
 import ru.aston.romanov.practical.utils.validation.groups.OperationMarker;
 import ru.aston.romanov.practical.utils.validation.groups.TransferMarker;
@@ -45,6 +46,9 @@ public class OperationRestController {
                             schema = @Schema(implementation = ErrorDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Account not fount",
                     content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Unsupported account operation exception",
+                    content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorDTO.class))})
     })
     @PostMapping("deposit")
@@ -53,7 +57,8 @@ public class OperationRestController {
         TransactionDTO transactionDTO;
         try {
             transactionDTO = operationsService.processOperation(operation);
-        } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException e) {
+        } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException |
+                 UnsupportedAccountOperationException e) {
             log.error("Request execution error: {}", e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -75,6 +80,9 @@ public class OperationRestController {
             @ApiResponse(responseCode = "409", description = "Insufficient funds exception",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Unsupported account operation exception",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDTO.class))})
     })
     @PostMapping("withdraw")
     public ResponseEntity<TransactionDTO> withdraw(@Validated(OperationMarker.class) @RequestBody OperationRequestDTO operation) {
@@ -82,7 +90,8 @@ public class OperationRestController {
         TransactionDTO transactionDTO;
         try {
             transactionDTO = operationsService.processOperation(operation);
-        } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException e) {
+        } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException |
+                 UnsupportedAccountOperationException e) {
             log.error("Request execution error: {}", e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -104,6 +113,9 @@ public class OperationRestController {
             @ApiResponse(responseCode = "409", description = "Insufficient funds exception",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Unsupported account operation exception",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDTO.class))})
     })
     @PostMapping("transfer")
     public ResponseEntity<TransactionDTO> transfer(@Validated(TransferMarker.class) @RequestBody OperationRequestDTO operation) {
@@ -111,7 +123,8 @@ public class OperationRestController {
         TransactionDTO transactionDTO;
         try {
             transactionDTO = operationsService.processOperation(operation);
-        } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException e) {
+        } catch (InvalidPinCodeException | NoAccountPresentException | InsufficientFundsException |
+                 UnsupportedAccountOperationException e) {
             log.error("Request execution error: {}", e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }

@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.aston.romanov.practical.dto.ErrorDTO;
-import ru.aston.romanov.practical.exceptions.InsufficientFundsException;
-import ru.aston.romanov.practical.exceptions.InvalidPinCodeException;
-import ru.aston.romanov.practical.exceptions.NoAccountPresentException;
-import ru.aston.romanov.practical.exceptions.NoBeneficiaryPresentException;
+import ru.aston.romanov.practical.exceptions.*;
 
 /**
  * Обработчики кастомных ошибок на уровне контроллера
@@ -37,6 +34,12 @@ public class CustomExceptionsControllerExceptionHandler {
     @ExceptionHandler(InsufficientFundsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorDTO> handleInvalidInsufficientFunds(RuntimeException ex) {
+        return new ResponseEntity<>(buildErrorDTO(ex,HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnsupportedAccountOperationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorDTO> handleUnsupportedAccountOperation(RuntimeException ex) {
         return new ResponseEntity<>(buildErrorDTO(ex,HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()), HttpStatus.BAD_REQUEST);
     }
 
