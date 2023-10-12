@@ -8,7 +8,6 @@ import ru.aston.romanov.practical.entities.Account;
 import java.util.Optional;
 
 public interface AccountRepo extends JpaRepository<Account, Long> {
-
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Account> findById(Long id);
 }

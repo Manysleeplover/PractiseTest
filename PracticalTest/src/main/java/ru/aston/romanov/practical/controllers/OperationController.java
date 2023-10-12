@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.aston.romanov.practical.dto.ErrorDTO;
 import ru.aston.romanov.practical.dto.TransactionDTO;
-import ru.aston.romanov.practical.dto.operations.OperationRequestDTO;
+import ru.aston.romanov.practical.dto.OperationRequestDTO;
 import ru.aston.romanov.practical.exceptions.InsufficientFundsException;
 import ru.aston.romanov.practical.exceptions.InvalidPinCodeException;
 import ru.aston.romanov.practical.exceptions.NoAccountPresentException;
 import ru.aston.romanov.practical.services.OperationsService;
-import ru.aston.romanov.practical.utils.validation.OperationMarker;
-import ru.aston.romanov.practical.utils.validation.TransferMarker;
+import ru.aston.romanov.practical.utils.validation.groups.OperationMarker;
+import ru.aston.romanov.practical.utils.validation.groups.TransferMarker;
 
 import java.util.Optional;
 
@@ -47,7 +47,7 @@ public class OperationController {
                             schema = @Schema(implementation = ErrorDTO.class))})
     })
     @PostMapping("deposit")
-    public ResponseEntity<TransactionDTO> deposit(@Validated(OperationMarker.class) @RequestBody OperationRequestDTO operation){
+    public ResponseEntity<TransactionDTO> deposit(@Validated(OperationMarker.class) @RequestBody OperationRequestDTO operation) {
         TransactionDTO transactionDTO;
         try {
             transactionDTO = operationsService.processOperation(operation);
@@ -73,7 +73,7 @@ public class OperationController {
                             schema = @Schema(implementation = ErrorDTO.class))}),
     })
     @PostMapping("withdraw")
-    public ResponseEntity<TransactionDTO> withdraw(@Validated(OperationMarker.class) @RequestBody OperationRequestDTO operation){
+    public ResponseEntity<TransactionDTO> withdraw(@Validated(OperationMarker.class) @RequestBody OperationRequestDTO operation) {
         TransactionDTO transactionDTO;
         try {
             transactionDTO = operationsService.processOperation(operation);
@@ -99,7 +99,7 @@ public class OperationController {
                             schema = @Schema(implementation = ErrorDTO.class))}),
     })
     @PostMapping("transfer")
-    public ResponseEntity<TransactionDTO> transfer(@Validated(TransferMarker.class) @RequestBody OperationRequestDTO operation){
+    public ResponseEntity<TransactionDTO> transfer(@Validated(TransferMarker.class) @RequestBody OperationRequestDTO operation) {
         TransactionDTO transactionDTO;
         try {
             transactionDTO = operationsService.processOperation(operation);

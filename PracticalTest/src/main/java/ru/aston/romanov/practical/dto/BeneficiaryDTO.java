@@ -3,8 +3,8 @@ package ru.aston.romanov.practical.dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import ru.aston.romanov.practical.utils.validation.BeneficiaryInfoMarker;
-import ru.aston.romanov.practical.utils.validation.CreateAccountMarker;
+import ru.aston.romanov.practical.utils.validation.groups.BeneficiaryInfoMarker;
+import ru.aston.romanov.practical.utils.validation.groups.CreateAccountMarker;
 
 import java.util.List;
 

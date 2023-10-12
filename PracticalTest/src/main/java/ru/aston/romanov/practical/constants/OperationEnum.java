@@ -2,6 +2,9 @@ package ru.aston.romanov.practical.constants;
 
 import lombok.Getter;
 
+/**
+ * Enum для определения типов операций по счёту
+ */
 @Getter
 public enum OperationEnum {
     WITHDRAW("WITHDRAW", 1),

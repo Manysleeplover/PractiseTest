@@ -18,9 +18,9 @@ import ru.aston.romanov.practical.exceptions.InvalidPinCodeException;
 import ru.aston.romanov.practical.exceptions.NoAccountPresentException;
 import ru.aston.romanov.practical.exceptions.NoBeneficiaryPresentException;
 import ru.aston.romanov.practical.services.AccountService;
-import ru.aston.romanov.practical.utils.validation.AccountInfo;
-import ru.aston.romanov.practical.utils.validation.BeneficiaryInfoMarker;
-import ru.aston.romanov.practical.utils.validation.CreateAccountMarker;
+import ru.aston.romanov.practical.utils.validation.groups.AccountInfoMarker;
+import ru.aston.romanov.practical.utils.validation.groups.BeneficiaryInfoMarker;
+import ru.aston.romanov.practical.utils.validation.groups.CreateAccountMarker;
 
 import java.util.Optional;
 
@@ -63,7 +63,7 @@ public class AccountController {
         BeneficiaryDTO result;
         try {
             result = accountService.getBeneficiaryInfo(beneficiaryDTO);
-        } catch (NoBeneficiaryPresentException e) {
+        } catch (NoBeneficiaryPresentException | InvalidPinCodeException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
 
@@ -83,7 +83,7 @@ public class AccountController {
                             schema = @Schema(implementation = ErrorDTO.class))})
     })
     @PostMapping("info")
-    public ResponseEntity<AccountDTO> getAccountInfo(@Validated(AccountInfo.class) @RequestBody AccountDTO accountDTO) {
+    public ResponseEntity<AccountDTO> getAccountInfo(@Validated(AccountInfoMarker.class) @RequestBody AccountDTO accountDTO) {
         AccountDTO result;
         try {
             result = accountService.getAccountInfo(accountDTO);

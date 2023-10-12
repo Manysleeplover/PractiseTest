@@ -14,6 +14,10 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
+/**
+ * Переопределённый обработчик для не прошедших валидацию DTO.
+ * Возвращает более развёрнутый и читаемый ответ клиенту
+ */
 @RestControllerAdvice
 public class MethodArgumentNotValidExceptionHandler {
 
@@ -29,7 +33,7 @@ public class MethodArgumentNotValidExceptionHandler {
     private Error processFieldErrors(List<org.springframework.validation.FieldError> fieldErrors) {
         Error error = new Error(BAD_REQUEST.value(), "validation error");
         for (org.springframework.validation.FieldError fieldError : fieldErrors) {
-            error.addFieldError(fieldError.getObjectName(),fieldError.getField(), fieldError.getDefaultMessage());
+            error.addFieldError(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage());
         }
         return error;
     }
@@ -45,8 +49,8 @@ public class MethodArgumentNotValidExceptionHandler {
             this.message = message;
         }
 
-        public void addFieldError(String objectName,String path, String message) {
-            FieldError error = new FieldError(objectName,path, message);
+        public void addFieldError(String objectName, String path, String message) {
+            FieldError error = new FieldError(objectName, path, message);
             fieldErrors.add(error);
         }
 

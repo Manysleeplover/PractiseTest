@@ -46,8 +46,12 @@ public class AccountService {
         return entityModelMapper.map(account, AccountDTO.class);
     }
 
-    public BeneficiaryDTO getBeneficiaryInfo(BeneficiaryDTO beneficiaryDTO) throws NoBeneficiaryPresentException {
+    public BeneficiaryDTO getBeneficiaryInfo(BeneficiaryDTO beneficiaryDTO) throws NoBeneficiaryPresentException, InvalidPinCodeException {
         Beneficiary beneficiary = getBeneficiaryById(beneficiaryDTO).orElseThrow(NoBeneficiaryPresentException::new);
+        if (!Objects.equals(beneficiary.getPin(), beneficiaryDTO.getPin())) {
+            throw new InvalidPinCodeException();
+        }
+
         List<Account> accounts = beneficiary.getAccounts();
         List<AccountDTO> accountDTOs = entityModelMapper.map(accounts, new TypeToken<List<AccountDTO>>() {
         }.getType());
@@ -64,7 +68,6 @@ public class AccountService {
         if (!Objects.equals(beneficiary.getPin(), accountDTO.getPin())) {
             throw new InvalidPinCodeException();
         }
-
         List<? extends Transaction> transactions = account.getTransactions();
         List<TransactionDTO> transactionDTOS = entityModelMapper.map(transactions, new TypeToken<List<TransactionDTO>>() {
         }.getType());

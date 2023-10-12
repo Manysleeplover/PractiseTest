@@ -4,7 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.aston.romanov.practical.constants.OperationEnum;
-import ru.aston.romanov.practical.dto.operations.OperationRequestDTO;
+import ru.aston.romanov.practical.dto.OperationRequestDTO;
 import ru.aston.romanov.practical.dto.TransactionDTO;
 import ru.aston.romanov.practical.entities.Account;
 import ru.aston.romanov.practical.entities.Beneficiary;
