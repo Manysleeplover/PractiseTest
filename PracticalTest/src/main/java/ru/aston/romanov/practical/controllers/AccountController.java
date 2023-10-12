@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,6 @@ import ru.aston.romanov.practical.services.AccountService;
 import ru.aston.romanov.practical.utils.validation.groups.AccountInfoMarker;
 import ru.aston.romanov.practical.utils.validation.groups.BeneficiaryInfoMarker;
 import ru.aston.romanov.practical.utils.validation.groups.CreateAccountMarker;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/account/")
@@ -43,7 +42,7 @@ public class AccountController {
     @PostMapping("create")
     public ResponseEntity<AccountDTO> createBeneficiary(@Validated(CreateAccountMarker.class) @RequestBody BeneficiaryDTO beneficiaryDTO) {
         AccountDTO accountDTO = accountService.createAccount(beneficiaryDTO);
-        return ResponseEntity.of(Optional.of(accountDTO));
+        return new ResponseEntity<>(accountDTO, HttpStatus.OK);
     }
 
     @Operation(summary = "Obtaining information about the beneficiary")
@@ -67,7 +66,7 @@ public class AccountController {
             throw new RuntimeException(e.getMessage(), e);
         }
 
-        return ResponseEntity.ofNullable(result);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Operation(summary = "Obtaining information about the account")
@@ -90,6 +89,6 @@ public class AccountController {
         } catch (NoAccountPresentException | InvalidPinCodeException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        return ResponseEntity.ofNullable(result);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

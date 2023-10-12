@@ -20,7 +20,6 @@ import java.util.Objects;
 @Component("WITHDRAW")
 public class WithdrawOperation implements AccountOperation {
 
-
     private final AccountRepo accountRepo;
     private final ModelMapper entityModelMapper;
 
