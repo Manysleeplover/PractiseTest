@@ -34,6 +34,9 @@ public class AccountService {
         this.entityModelMapper = entityModelMapper;
     }
 
+    /**
+     * Создаем счёт по фамилии имени и pin-коду бенефициара. Если его нет - создаем нового, если есть - добавляем найденному
+     */
     @Transactional
     public AccountDTO createAccount(BeneficiaryDTO beneficiaryDTO) {
         Optional<Beneficiary> optionalBeneficiary = getBeneficiary(beneficiaryDTO);
@@ -46,19 +49,13 @@ public class AccountService {
         return entityModelMapper.map(account, AccountDTO.class);
     }
 
-    /**
-     *  Создаем счёт по фамилии имени и pin-коду бенефициара. Если его нет - создаем нового, если есть - добавляем найденному
-     */
+
     public BeneficiaryDTO getBeneficiaryInfo(BeneficiaryDTO beneficiaryDTO) throws NoBeneficiaryPresentException, InvalidPinCodeException {
         Beneficiary beneficiary = getBeneficiary(beneficiaryDTO).orElseThrow(NoBeneficiaryPresentException::new);
-        if (!Objects.equals(beneficiary.getPin(), beneficiaryDTO.getPin())) {
-            throw new InvalidPinCodeException();
-        }
 
         List<Account> accounts = beneficiary.getAccounts();
         List<AccountDTO> accountDTOs = entityModelMapper.map(accounts, new TypeToken<List<AccountDTO>>() {
         }.getType());
-
         BeneficiaryDTO resultBeneficiaryDTO = entityModelMapper.map(beneficiary, BeneficiaryDTO.class);
         resultBeneficiaryDTO.setAccountList(accountDTOs);
         resultBeneficiaryDTO.setId(beneficiary.getId());

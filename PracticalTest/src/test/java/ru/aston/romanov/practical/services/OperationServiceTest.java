@@ -2,6 +2,7 @@ package ru.aston.romanov.practical.services;
 
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -73,6 +74,7 @@ class OperationServiceTest {
     }
 
     @Test
+    @Tag("Transfer")
     void givenInsufficientFundsForTransfer_thenNoAccountPresentException() {
         OperationRequestDTO operationRequestDTO = OperationRequestDTO.builder()
                 .id(1L)
@@ -85,6 +87,7 @@ class OperationServiceTest {
     }
 
     @Test
+    @Tag("Transfer")
     void givenInvalidFundsConsumerId_thenNoAccountPresentException() {
         OperationRequestDTO operationRequestDTO = OperationRequestDTO.builder()
                 .id(1L)
@@ -97,6 +100,7 @@ class OperationServiceTest {
     }
 
     @Test
+    @Tag("Withdraw")
     void givenInsufficientFunds_thenInsufficientFundsException() {
         OperationRequestDTO operationRequestDTO = OperationRequestDTO.builder()
                 .id(1L)
@@ -109,6 +113,7 @@ class OperationServiceTest {
 
     @ParameterizedTest
     @MethodSource("ru.aston.romanov.practical.services.OperationServiceTest#getValidOperationType")
+    @Tag("AllOperations")
     void givenInvalidPinCode_thenThrowInvalidPinCodeException(String operationType) {
         OperationRequestDTO operationRequestDTO = OperationRequestDTO.builder()
                 .id(1L)
@@ -122,6 +127,7 @@ class OperationServiceTest {
 
     @ParameterizedTest
     @MethodSource("ru.aston.romanov.practical.services.OperationServiceTest#getValidOperationType")
+    @Tag("AllOperations")
     void givenInvalidAccountId_thenThrowNoAccountPresentException(String operationType) {
         OperationRequestDTO operationRequestDTO = OperationRequestDTO.builder()
                 .id(3L)
@@ -136,6 +142,7 @@ class OperationServiceTest {
 
     @ParameterizedTest
     @MethodSource("ru.aston.romanov.practical.services.OperationServiceTest#getValidOperationType")
+    @Tag("AllOperations")
     void givenValidOperationType(String operationType) {
         OperationRequestDTO operationRequestDTO = OperationRequestDTO.builder()
                 .id(1L)
@@ -152,6 +159,7 @@ class OperationServiceTest {
     @ParameterizedTest
     @MethodSource("ru.aston.romanov.practical.services.OperationServiceTest#getInvalidOperationType")
     @NullAndEmptySource
+    @Tag("AllOperations")
     void giveInvalidOperationType_thenThrowsException(String operationType) {
         OperationRequestDTO operationRequestDTO = OperationRequestDTO.builder()
                 .id(1L)
